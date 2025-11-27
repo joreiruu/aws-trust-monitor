@@ -1,24 +1,3 @@
-<?php
-// AWS Function URL
-$api_url = "https://ktaglnmfyjbvuo4ulymybjelv40twbdq.lambda-url.ap-southeast-2.on.aws/";
-
-function fetchData($url) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
-    $output = curl_exec($ch);
-    curl_close($ch);
-    return json_decode($output, true);
-}
-
-$data = fetchData($api_url);
-$current = $data['current'] ?? null;
-$history = $data['history'] ?? [];
-
-$status_class = ($current && $current['status'] === 'ONLINE') ? 'status-green' : 'status-red';
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,37 +10,96 @@ $status_class = ($current && $current['status'] === 'ONLINE') ? 'status-green' :
     <div class="container">
         <h1>System Trust Monitor</h1>
         
+        <!-- Live Status Card -->
         <div class="card">
-            <h2>Target: <?php echo htmlspecialchars($current['target'] ?? 'Loading...'); ?></h2>
-            <div class="indicator <?php echo $status_class; ?>">
-                <?php echo htmlspecialchars($current['status'] ?? 'CONNECTING...'); ?>
+            <h2 id="targetUrl">Loading...</h2>
+            <div id="statusIndicator" class="indicator" style="background-color: #ccc;">
+                CONNECTING...
             </div>
             <div class="details">
-                <p>HTTP Code: <strong><?php echo htmlspecialchars($current['http_code'] ?? '-'); ?></strong></p>
+                <p>HTTP Code: <strong id="httpCode">-</strong></p>
+                <p id="lastChecked" style="font-size: 11px; margin-top: 5px;"></p>
             </div>
         </div>
 
+        <!-- History Table -->
         <div class="history-section">
             <h3>Recent Checks (DynamoDB)</h3>
-            <table>
-                <tr>
-                    <th>Time</th>
-                    <th>Status</th>
-                    <th>Code</th>
-                </tr>
-                <?php foreach ($history as $log): ?>
-                <tr>
-                    <td><?php echo date('H:i:s', strtotime($log['timestamp'])); ?></td>
-                    <td class="<?php echo ($log['status'] === 'ONLINE') ? 'text-green' : 'text-red'; ?>">
-                        <?php echo htmlspecialchars($log['status']); ?>
-                    </td>
-                    <td><?php echo htmlspecialchars($log['http_code']); ?></td>
-                </tr>
-                <?php endforeach; ?>
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="3">Loading history...</td></tr>
+                </tbody>
             </table>
         </div>
         
-        <p class="footer">Powered by AWS Lambda, DynamoDB & PHP</p>
+        <p class="footer">Powered by AWS Lambda, DynamoDB & JavaScript</p>
     </div>
+
+    <script>
+        const apiUrl = "https://ktaglnmfyjbvuo4ulymybjelv40twbdq.lambda-url.ap-southeast-2.on.aws/";
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                // 1. Update Current Status
+                const current = data.current;
+                document.getElementById('targetUrl').innerText = "Target: " + current.target;
+                document.getElementById('httpCode').innerText = current.http_code;
+                document.getElementById('lastChecked').innerText = "Last: " + new Date(current.timestamp).toLocaleString();
+                
+                const statusBox = document.getElementById('statusIndicator');
+                statusBox.innerText = current.status;
+                
+                if (current.status === 'ONLINE') {
+                    statusBox.className = "indicator status-green";
+                } else {
+                    statusBox.className = "indicator status-red";
+                }
+
+                // 2. Update History Table
+                const historyBody = document.querySelector('#historyTable tbody');
+                historyBody.innerHTML = ""; // Clear loading message
+
+                data.history.forEach(log => {
+                    const row = document.createElement('tr');
+                    
+                    // Format Time
+                    const timeCell = document.createElement('td');
+                    timeCell.innerText = new Date(log.timestamp).toLocaleTimeString();
+                    
+                    // Format Status
+                    const statusCell = document.createElement('td');
+                    statusCell.innerText = log.status;
+                    statusCell.className = (log.status === 'ONLINE') ? 'text-green' : 'text-red';
+
+                    // Format Code
+                    const codeCell = document.createElement('td');
+                    codeCell.innerText = log.http_code;
+
+                    row.appendChild(timeCell);
+                    row.appendChild(statusCell);
+                    row.appendChild(codeCell);
+                    historyBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById('statusIndicator').innerText = "ERROR";
+                document.getElementById('statusIndicator').className = "indicator status-red";
+            }
+        }
+
+        // Load data immediately when page opens
+        loadDashboard();
+    </script>
 </body>
 </html>
