@@ -64,4 +64,4 @@ The system includes error handling logic. If the Lambda function fails to connec
 4.  Open `http://localhost:8000` in your browser.
 
 ---
-*Built by [Your Name] as a showcase of Cloud Engineering skills.*
+*Built by Joriel Espinocilla as a showcase of Cloud Engineering skills.*
