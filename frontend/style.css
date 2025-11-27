@@ -1,7 +1,145 @@
-/* History Table Styling */
-.history-section { margin-top: 30px; text-align: left; }
-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
-th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; font-size: 14px; }
-th { background-color: #f8f9fa; font-weight: bold; }
-.text-green { color: #28a745; font-weight: bold; }
-.text-red { color: #dc3545; font-weight: bold; }
+/* RESET & BASICS */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Aligns to top so it doesn't get cut off */
+    min-height: 100vh;
+    margin: 0;
+    padding: 40px 20px;
+    color: #333;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #232f3e; /* AWS Dark Blue */
+}
+
+/* MAIN STATUS CARD */
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+h2 {
+    font-size: 14px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 10px 0;
+}
+
+/* STATUS INDICATORS */
+.indicator {
+    font-size: 28px;
+    font-weight: 800;
+    padding: 15px;
+    border-radius: 8px;
+    color: white;
+    margin: 15px 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.status-green {
+    background: linear-gradient(135deg, #28a745, #218838);
+    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+}
+
+.status-red {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3);
+}
+
+.details {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #555;
+    border: 1px solid #e9ecef;
+}
+
+/* HISTORY TABLE SECTION */
+.history-section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.history-section h3 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #232f3e;
+    border-bottom: 2px solid #f0f2f5;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+td {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f2f5;
+    font-size: 14px;
+    text-align: left;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* TABLE STATUS BADGES */
+.text-green {
+    color: #28a745;
+    font-weight: bold;
+    background: #e6f4ea;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.text-red {
+    color: #dc3545;
+    font-weight: bold;
+    background: #fce8e6;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+/* FOOTER */
+.footer {
+    margin-top: 30px;
+    color: #aaa;
+    font-size: 12px;
+}
