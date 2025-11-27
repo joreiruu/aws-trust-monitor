@@ -11,7 +11,7 @@ export const handler = async (event) => {
 
     const result = {
       target: targetUrl,
-      status: isOnline ? 'ONLINE' : 'ISSUE DETECTED',
+      status: isOnline ? 'SYSTEM OPERATIONAL' : 'SYSTEM CRITICAL',
       http_code: response.status,
       timestamp: new Date().toISOString()
     };
