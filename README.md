@@ -1,52 +1,67 @@
-# Serverless Trust Monitor (AWS Lambda + PHP)
+# ☁️ Serverless Trust Monitor (Enterprise Edition)
 
-## Project Overview
-This project is a Full-Stack health monitoring system designed to track the uptime of external websites. It replicates the architecture of an **Online Trust Monitor**, ensuring reliability and real-time status updates.
+**A Full-Stack Serverless Application for real-time website monitoring, automated alerting, and historical data logging.**
 
-It demonstrates the integration between a **Serverless Backend (AWS Lambda)** and a **Traditional Web Frontend (PHP)**, using secure HTTP requests (cURL) to fetch and display data.
+This project demonstrates a production-ready serverless architecture connecting **AWS Lambda**, **DynamoDB**, and **SNS** to a **PHP Frontend**, fully automated via a **CI/CD Pipeline**.
+
+![Dashboard Preview](dashboard.png)
+
+## 🚀 Key Features
+* **Real-Time Monitoring:** Checks website status (HTTP 200 OK) on demand.
+* **🔥 Autonomous Alerting:** Uses **AWS EventBridge** to schedule checks every 5 minutes and **AWS SNS** to send urgent email alerts if the target site goes down.
+* **💾 Data Persistence:** Logs every single health check into **AWS DynamoDB** for historical analysis.
+* **⚡ Serverless Backend:** Built on AWS Lambda (Node.js) to scale to zero cost when idle.
+* **🔄 CI/CD Automation:** Fully automated deployment pipeline using **GitHub Actions**.
 
 ## 🏗 Architecture
-**Logic Flow:**
-`Target URL` -> `AWS Lambda (Node.js)` -> `Function URL (JSON)` -> `PHP Backend (cURL)` -> `HTML/CSS Dashboard`
+The system follows a decoupled microservices architecture:
 
-* **Backend:** AWS Lambda (Node.js 20.x) performing HTTP health checks.
-* **API Layer:** AWS Lambda Function URL (Public Endpoint).
-* **Frontend:** PHP 8.x using cURL for API consumption.
-* **Styling:** Custom CSS for status visualization.
+`User/Scheduler` → `AWS Lambda (Node.js)` → `Target Website`
+                                      ↓
+                            ---------------------
+                            ↓         ↓         ↓
+                     `DynamoDB`     `SNS`    `Frontend (PHP)`
+                     (Logging)    (Alerts)    (Visualization)
 
 ## 🛠 Tech Stack
-* **Cloud:** AWS Lambda, Serverless Architecture
-* **Languages:** Node.js (Backend), PHP (Integration), HTML/CSS (UI)
-* **Development Environment:** Visual Studio Code (VS Code)
-* **Data Format:** JSON
+| Component | Technology | Role |
+| :--- | :--- | :--- |
+| **Backend** | AWS Lambda (Node.js 20.x) | Core Business Logic |
+| **Database** | AWS DynamoDB | NoSQL History Logging |
+| **Alerting** | AWS SNS | Critical Email Notifications |
+| **Frontend** | PHP 8.x + HTML/CSS | Data Visualization Dashboard |
+| **DevOps** | GitHub Actions | CI/CD Automated Deployment |
+| **IDE** | VS Code | Development Environment |
 
-## 📸 Screenshots
-### The Dashboard
-![Dashboard Preview](dashboard.png)
-*Real-time status display showing HTTP 200 OK response.*
+## 📸 Project Highlights
+
+### 1. The Automation (CI/CD)
+I moved away from manual deployments. Every push to the `main` branch triggers a GitHub Action that:
+1.  Tests the code integrity.
+2.  Zips the Node.js function.
+3.  Authenticates via IAM Roles.
+4.  Deploys the update to AWS Lambda automatically.
+
+### 2. The Database (DynamoDB)
+Instead of transient data, the system persists health checks. The backend writes a log entry with `Timestamp` and `HTTP Code` to DynamoDB, allowing the Frontend to fetch and display the "Recent History" table.
+
+### 3. Reliability (Self-Healing)
+The system includes error handling logic. If the Lambda function fails to connect (e.g., DNS error), it catches the exception and triggers an immediate SNS alert to the administrator.
 
 ## 🚀 How to Run Locally
 
 ### Prerequisites
-* PHP 8.x installed via XAMPP or manually.
-* VS Code.
+* PHP 8.x
+* Internet connection (to reach AWS API)
 
-### Installation Steps
+### Installation
 1.  Clone the repository.
 2.  Navigate to the `frontend` directory.
-3.  Start the local PHP server:
+3.  Start the local server:
     ```bash
     php -S localhost:8000
     ```
 4.  Open `http://localhost:8000` in your browser.
 
-### 🔧 Configuration & Troubleshooting
-**Note on Local PHP Environment:**
-During development, I configured the local `php.ini` environment to support secure API calls:
-* Initialized `php.ini` from default.
-* Enabled `extension=curl` to handle remote API requests securely.
-* Configured `openssl` for HTTPS handshake verification.
-
-## 📄 Code Structure
-* `/lambda/index.mjs`: The serverless logic that pings the target URL and returns a JSON object.
-* `/frontend/index.php`: The display logic that consumes the API and renders the UI.
+---
+*Built by [Your Name] as a showcase of Cloud Engineering skills.*
