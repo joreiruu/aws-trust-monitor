@@ -9,7 +9,7 @@ const docClient = DynamoDBDocumentClient.from(dbClient);
 export const handler = async (event) => {
   const targetUrl = 'https://www.google.com';
   const tableName = 'TrustMonitorLogs';
-  const snsTopicArn = 'arn:aws:sns:us-east-1:177815087725:SiteDownAlerts';
+  const snsTopicArn = 'arn:aws:sns:ap-southeast-2:177815087725:SiteDownAlerts';
   
   const timestamp = new Date().toISOString();
 
